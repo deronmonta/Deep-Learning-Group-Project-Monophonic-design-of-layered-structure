@@ -39,20 +39,24 @@ LABEL = ['R','T','A']
 
 # Columns for tensorflow
 feature_cols = [tf.contrib.layers.real_valued_column(k) for k in FEATURES]
-train=(train-train.mean())/train.std()
-# Training set and Prediction set with the features to predict
-#training_set = train[COLUMNS]
+train=(train-train.mean())/train.std()#Normalize the data 
 
-#%% Define the model and the input function
-#Model Here
-init_op = tf.global_variables_initializer()
+
+#Subset into train and test data
+#indices = pd.DataFrame(np.random.randn(train))
+msk = np.random.choice(range(len(train)),int(0.2*len(train)))
+test = train.iloc[msk]
+train.drop(msk)
+
+
+
 regressor = tf.estimator.DNNRegressor(feature_columns=feature_cols, 
                                           activation_fn = tf.nn.relu, hidden_units=[500, 400, 200, 100, 50, 25],optimizer = tf.train.AdamOptimizer(learning_rate= 0.001),
-                                          label_dimension=3)
+                                          label_dimension=3, model_dir='/modelcheckpoint')
 #hidden_units=[400, 200, 100, 50, 25, 50]
 
 def input_fn(pred = False, batch_size = 256):
-    
+        
     if pred == False:
         indices = np.random.choice(range(len(train)), batch_size)#select random indices for minibatch
         feature_cols = {k: tf.constant(train.iloc[indices][k].values) for k in FEATURES}
@@ -60,28 +64,34 @@ def input_fn(pred = False, batch_size = 256):
         
         return feature_cols, labels
 
-    if pred == True:
-        test_set_size = 10
-        indices = np.random.choice(range(len(train)), test_set_size)#Chooes the number of minibatch as indices
-        feature_cols = {k: tf.constant(train.iloc[:10][k].values) for k in FEATURES}
         
-        return feature_cols
+
+
+#Input function for testing
+
+def input_test():
+    test_set_size = 100
+    indices = np.random.choice(range(len(test)), test_set_size)
+    feature_cols = {k: tf.constant(test.iloc[indices][k].values) for k in FEATURES}
+        
+    return feature_cols
+
+
+
 #%%Mini Batch training
+
       
 epochs = 10
 #batch_size =128
-
+init_op = tf.global_variables_initializer()
 logs_path = r'D:\Yale_Course\Deep Learning Theory Application\Deep-Learning-Group-Project-Monophonic-design-of-layered-structure\tensor_board_test'
 #saver = tf.train.Saver()
 with tf.Session() as sess:
-    writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
+    #writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
     for e in range(epochs):
         regress_res = regressor.train(input_fn = input_fn, steps=1000)
-        ev = regressor.evaluate(input_fn = input_fn, steps=1)
-    #sess.close()
-        
-    #saver.save(sess2, "/model.ckpt")
-    # Shuffle training data
+        ev = regressor.evaluate(input_fn = input_test, steps=1)#Evaluate the model every epoch
+    #save_path = saver.save(sess, logs_path)
     
 
 #%%Prediction Mode
