@@ -46,13 +46,13 @@ train=(train-train.mean())/train.std()#Normalize the data
 #indices = pd.DataFrame(np.random.randn(train))
 msk = np.random.choice(range(len(train)),int(0.2*len(train)))
 test = train.iloc[msk]
-train.drop(msk)
+train = train.drop(msk[:])
 
 
 
 regressor = tf.estimator.DNNRegressor(feature_columns=feature_cols, 
                                           activation_fn = tf.nn.relu, hidden_units=[500, 400, 200, 100, 50, 25],optimizer = tf.train.AdamOptimizer(learning_rate= 0.001),
-                                          label_dimension=3, model_dir='/modelcheckpoint')
+                                          label_dimension=3)
 #hidden_units=[400, 200, 100, 50, 25, 50]
 
 def input_fn(pred = False, batch_size = 256):
@@ -90,7 +90,7 @@ with tf.Session() as sess:
     #writer = tf.summary.FileWriter(logs_path, graph=tf.get_default_graph())
     for e in range(epochs):
         regress_res = regressor.train(input_fn = input_fn, steps=1000)
-        ev = regressor.evaluate(input_fn = input_test, steps=1)#Evaluate the model every epoch
+       # ev = regressor.evaluate(input_fn = input_test, steps=1)#Evaluate the model every epoch
     #save_path = saver.save(sess, logs_path)
     
 
