@@ -15,9 +15,6 @@ plt.switch_backend('agg')
 
 #reset_graph()
 
-# Set up logging
-tf.logging.set_verbosity(tf.logging.DEBUG)
-sess = tf.InteractiveSession()
 
 # Load in the training data
 # all_design.pkl
@@ -27,7 +24,7 @@ sess = tf.InteractiveSession()
 # A - absorption (normalized)
 # d1-d8 - thickness of layer (Si, SiO2, alternating) (nm, I assume)
 # lambda - wavelength of input light
-data = pd.read_pickle(r'C:\Users\FurryMonster Yang\all_design.pkl')
+data = pd.read_pickle('all_design.pkl')
 data = data.dropna()
 data = data.sample(frac=1).reset_index(drop=True) # Shuffle the data for training purpose
 #data=(data-data.mean())/data.std() # Normalize the data 
@@ -41,6 +38,10 @@ diff = lambda l1,l2: [x for x in l1 if x not in l2]
 # Grab the training labels
 input_labels = diff(list(data.columns),output_labels)
 
+#Switch up the input output
+output_labels = input_labels
+input_labels = ['R','T','A']
+
 # Now sort into train, validation, test sets
 validation_size = int(np.floor(len(data)/10))
 test_size = int(np.floor(len(data)/10))
@@ -48,8 +49,8 @@ train_size = len(data) - validation_size - test_size
 
 data =  data.sample(frac=1).reset_index(drop=True)
 validation = data.ix[0:(validation_size-1)]
-test = data.ix[validation_size:(validation_size+test_size-1)]
-train = data.ix[(validation_size+test_size):(validation_size+test_size+train_size)]
+test = data.iloc[validation_size:(validation_size+test_size-1)]
+train = data.iloc[(validation_size+test_size):(validation_size+test_size+train_size)]
 
 
 #train[input_labels], train[output_labels] = make_regression(n_features=9, n_informative=2,random_state=0, shuffle=False)
@@ -63,6 +64,15 @@ print(pred_results)
 print("True Label")
 print(test[output_labels].as_matrix())
 
-mse = mean_squared_error(test[output_labels].as_matrix(), pred_results)
-print('Mean Square Error:')
-print(mse)
+mse_r = mean_squared_error(test[output_labels]['d1'].as_matrix(), pred_results[:,0])
+mse_t = mean_squared_error(test[output_labels]['d2'].as_matrix(), pred_results[:,1])
+mse_a = mean_squared_error(test[output_labels]['d3'].as_matrix(), pred_results[:,2])
+
+print('R:Mean Square Error:')
+print(mse_r)
+print('T:Mean Square Error:')
+print(mse_t)
+print('A:Mean Square Error:')
+print(mse_a)
+
+
