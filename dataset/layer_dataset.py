@@ -20,16 +20,14 @@ class Layer_Dataset(Dataset):
 
     def __getitem__(self,index):
         layer_thickness = self.dataframe.iloc[index,4:12] # last 8 columns for layer thickness
-        R = self.dataframe.iloc[index,1].values
-        T = self.dataframe.iloc[index,2].values
-        A = self.dataframe.iloc[index,3].values
-        lambda_ = self.dataframe.iloc[index,0].values
+        Lambda_RTA = self.dataframe.iloc[index,0:4].values
+        
 
         print(layer_thickness)
         #Transform to numpy array
         layer_thickness_np = layer_thickness.values
 
-        sample = {'Lambda':lambda_,'R':R,'T':T,'R':R, layer_thickness':layer_thickness_np}
+        sample = {'Lambda_RTA':Lambda_RTA 'layer_thickness':layer_thickness_np}
         return sample
     def __len__(self):
         return len(self.dataframe)

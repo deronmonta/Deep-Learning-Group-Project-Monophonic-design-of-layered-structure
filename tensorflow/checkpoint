@@ -1,0 +1,2 @@
+model_checkpoint_path: "inverse_layer_model"
+all_model_checkpoint_paths: "inverse_layer_model"
