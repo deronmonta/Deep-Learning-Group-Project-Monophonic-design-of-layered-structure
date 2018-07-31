@@ -1,0 +1,27 @@
+Physics:
+
+The physical problem is to calculate the power reflected (R), transmitted (T), and absorbed (A) by an eight layered structure, with alternating Si and SiO2 of thickness d1, d2,d3, ..., d8.
+
+The incoming waves are chosen to be within the visible wavelength, ranging from 380 to 750 nm.
+
+
+Design information:
+
+Each design is different in the sense that the thickness of each layer are different. They are randomly generated numbers ranging from 20 to 200 nm.
+
+Data:
+
+Each design#.txt file is a design with thickness d1, d2, ..., d8.
+
+The eight numerical values in the first row corresponds to d1, d2, ...,d8 respectively.
+
+Starting from row 2, the first column indicates the wavelength of the incoming wave. The second, third and forth column corresponds to the normalised reflected, transmitted, and absorbed power.
+
+More explicitly, 
+
+d1, d2, d3, d4, d5, d6, d7,d8
+wavelength (380 nm), R, T, A
+...
+...
+...
+wavelength (750 nm), R, T, A

@@ -1,1 +1,0 @@
-move "D:\Yale_Course\Deep Learning Theory Application\Deep-Learning-Group-Project-Monophonic-design-of-layered-structure\*.csv" "D:\Yale_Course\Deep Learning Theory Application\Deep-Learning-Group-Project-Monophonic-design-of-layered-structure\data"
