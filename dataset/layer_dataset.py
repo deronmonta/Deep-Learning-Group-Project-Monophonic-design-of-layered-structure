@@ -5,7 +5,7 @@ from glob import glob
 import os
 import pandas as pd
 import numpy as np
-
+import pickle
 
 class Layer_Dataset(Dataset):
     '''
@@ -14,7 +14,8 @@ class Layer_Dataset(Dataset):
     def __init__(self,data_dir):
         print(data_dir)
         
-        self.dataframe = pd.read_pickle(data_dir)
+        
+        self.dataframe = pd.read_csv(data_dir)
         print(self.dataframe)
 
 
@@ -23,11 +24,12 @@ class Layer_Dataset(Dataset):
         Lambda_RTA = self.dataframe.iloc[index,0:4].values
         
 
-        print(layer_thickness)
+        
         #Transform to numpy array
         layer_thickness_np = layer_thickness.values
-
-        sample = {'Lambda_RTA':Lambda_RTA 'layer_thickness':layer_thickness_np}
+        layer_thickness_tensor = torch.tensor(layer_thickness_np)
+        Lambda_RTA = torch.tensor(Lambda_RTA)
+        sample = {'Lambda_RTA':Lambda_RTA, 'layer_thickness':layer_thickness_tensor}
         return sample
     def __len__(self):
         return len(self.dataframe)
