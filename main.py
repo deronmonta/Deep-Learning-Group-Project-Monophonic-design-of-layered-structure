@@ -7,20 +7,25 @@ import torch.optim as optim
 from dataset.layer_dataset import *
 from nets.nets import *
 from tqdm import tqdm
-
+import argparse
 #This trains the model with the forward pass
+
+parser = argparse.ArgumentParser(description='This script will train a network for the forward pass of the data')
+parser.add_argument('--data_dir',default='./data/all_design.pkl',help='path to directory containing the layer designs and outputs')
+parser.add_argument('--model_dir',default='./model',help='Directory to save and load the model')
+parser.add_argument('--batch_size', type=int, default=128, help='input batch size')
+parser.add_argument('--model_name',default='./forward_model')
+parser.add_argument('--hidden_neurons',type=int)
+
+options = parser.parse_args()
+print(options)
 
 
 #Hyperparameters
-DATA_DIR = './data/all_design.csv'
-BATCH_SIZE = 64
 NUM_NEURONS = 128
 LEARNING_RATE = 0.0001
 MODEL_NAME = 'forward_model.pkl'
 EPOCHS = 20
-
-
-
 
 
 
