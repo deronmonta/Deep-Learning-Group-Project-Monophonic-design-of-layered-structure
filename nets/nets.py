@@ -35,6 +35,19 @@ class Dense_Net(nn.Module):
 
         
 class Generator(nn.Module):
+    """[summary]
+    
+    Args:
+        nn ([type]): [description]
+    """
+    def __init__(self,in_dim,out_dim,nf):
+        super(Generator,self).__init__()
+        
+
+
+
+
+
 
 class Discriminator(nn.Module):
     

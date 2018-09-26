@@ -22,12 +22,23 @@ parser.add_argument('--epochs',type=int,default=100,help='Number of epochs to tr
 options = parser.parse_args()
 print(options)
 
+try:
+    os.environ['CUDA_VISIBLE_DEVICES'] = "1,4,8,9"
+    print('Manual GPU loading successful')  
+    print('__Number CUDA Devices:', torch.cuda.device_count())
+except:
+    print('Manual GPU loading failed')
+    pass
 
 layer_dataset = Layer_Dataset(options.data_dir,mode='gan') 
 data_loader = DataLoader(layer_dataset, batch_size=options.batch_size,shuffle=True,num_workers=2)
 
-dense_net = (Dense_Net(in_dim=8,out_dim=4,num_neurons=options.hidden_neurons)).cuda()
+dense_net = Dense_Net(in_dim=8,out_dim=4,num_neurons=options.hidden_neurons).cuda()
+discriminator = 
+
+
 
 net_optimizer = optim.Adam(dense_net.parameters(),lr=options.learning_rate)
 
 loss_func = nn.MSELoss()
+
