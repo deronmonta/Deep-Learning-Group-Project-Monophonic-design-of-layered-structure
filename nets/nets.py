@@ -9,6 +9,7 @@ from nets.layers import *
 class Dense_Net(nn.Module):
     def __init__(self, in_dim, out_dim, num_neurons):
         '''
+        Fully connected network for forward regression
         '''
         print('\n---------------------Dense Net Starting ---------------------')
         super(Dense_Net,self).__init__()
@@ -33,5 +34,7 @@ class Dense_Net(nn.Module):
         return x
 
         
+class Generator(nn.Module):
 
-
+class Discriminator(nn.Module):
+    

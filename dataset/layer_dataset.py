@@ -11,7 +11,7 @@ class Layer_Dataset(Dataset):
     '''
     Dimension is 3703197 by 12
     '''
-    def __init__(self,data_dir):
+    def __init__(self,data_dir,mode='regression'):
         print(data_dir)
         
         
@@ -30,6 +30,10 @@ class Layer_Dataset(Dataset):
         layer_thickness_tensor = torch.tensor(layer_thickness_np)
         Lambda_RTA = torch.tensor(Lambda_RTA)
         sample = {'Lambda_RTA':Lambda_RTA, 'layer_thickness':layer_thickness_tensor}
+
+        if mode == 'gan':
+            data = self.dataframe.iloc[index,:]
+            sample = {'full_data':data}
         return sample
     def __len__(self):
         return len(self.dataframe)
