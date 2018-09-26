@@ -10,8 +10,11 @@ from tqdm import tqdm
 import argparse
 #This trains the model with the forward pass
 
+
+#Hyperparameters
+
 parser = argparse.ArgumentParser(description='This script will train a network for the forward pass of the data')
-parser.add_argument('--data_dir',default='./data/all_design.csv',help='path to directory containing the layer designs and outputs')
+parser.add_argument('--data_dir',default='./data/all_design.pkl',help='path to directory containing the layer designs and outputs')
 parser.add_argument('--model_dir',default='./model',help='Directory to save and load the model')
 parser.add_argument('--batch_size', type=int, default=128, help='input batch size')
 parser.add_argument('--model_name',default='./forward_model.pkl')
@@ -23,15 +26,11 @@ options = parser.parse_args()
 print(options)
 
 
-#Hyperparameters
-
-
-
 
 layer_dataset = Layer_Dataset(options.data_dir) 
 data_loader = DataLoader(layer_dataset, batch_size=options.batch_size,shuffle=True,num_workers=2)
 
-dense_net = (Dense_Net(in_dim=8,out_dim=4,num_neurons=options.hidden_neurons)).cuda()
+dense_net = (Dense_Net(in_dim=8,out_dim=4,num_units=options.hidden_neurons)).cuda()
 
 net_optimizer = optim.Adam(dense_net.parameters(),lr=options.learning_rate)
 
@@ -66,8 +65,8 @@ for epoch in range(options.epochs):
         if i % 1000 == 0:
             print('\n')
             print('Epoch: {}'.format(epoch))
-            print('Ground Truth: {}'.format(ground_truth))
-            print('Predictions {}'.format(predictions))
+            print('Ground Truth: {}'.format(ground_truth.data.cpu()))
+            print('Predictions {}'.format(predictions.data.cpu()))
             print('Loss: {}'.format(loss))
             torch.save(dense_net,os.path.join('./model',options.model_name))
         

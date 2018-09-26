@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import Dataset,DataLoader
-#import torchbiomed.utils as utils
 from glob import glob
 import os
 import pandas as pd
@@ -14,27 +13,32 @@ class Layer_Dataset(Dataset):
     def __init__(self,data_dir,mode='regression'):
         print(data_dir)
         
-        
-        self.dataframe = pd.read_csv(data_dir)
+        file = open(data_dir,'rb')
+        self.dataframe  = pickle.load(file)
+        self.dataframe = self.dataframe.dropna()
         print(self.dataframe)
 
+        
 
+        self.mode = mode
+        
     def __getitem__(self,index):
-        layer_thickness = self.dataframe.iloc[index,4:12] # last 8 columns for layer thickness
+        layer_thickness = self.dataframe.iloc[index,4:12].values # last 8 columns for layer thickness
         Lambda_RTA = self.dataframe.iloc[index,0:4].values
         
-
-        
-        #Transform to numpy array
-        layer_thickness_np = layer_thickness.values
-        layer_thickness_tensor = torch.tensor(layer_thickness_np)
+        #Transform to pytorch tensor
+        layer_thickness_tensor = torch.tensor(layer_thickness)
         Lambda_RTA = torch.tensor(Lambda_RTA)
         sample = {'Lambda_RTA':Lambda_RTA, 'layer_thickness':layer_thickness_tensor}
 
-        if mode == 'gan':
-            data = self.dataframe.iloc[index,:]
+        if self.mode == 'gan':
+            data = self.dataframe.iloc[index,:].values
+            data = torch.tensor(data)
             sample = {'full_data':data}
+            #print('sample from dataloader {}'.format(sample))
         return sample
+
+
     def __len__(self):
         return len(self.dataframe)
         
