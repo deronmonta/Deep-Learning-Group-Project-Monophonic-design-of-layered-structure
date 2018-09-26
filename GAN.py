@@ -29,5 +29,4 @@ D = (Discriminator(in_dim=8,out_dim=4,num_neurons=NUM_NEURONS)).cuda()
 
 
 net_optimizer = optim.Adam(dense_net.parameters(),lr=LEARNING_RATE)
-
 loss_func = nn.MSELoss()
