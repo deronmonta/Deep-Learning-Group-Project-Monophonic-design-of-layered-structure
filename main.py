@@ -29,8 +29,8 @@ EPOCHS = 20
 
 
 
-layer_dataset = Layer_Dataset(DATA_DIR) 
-data_loader = DataLoader(layer_dataset, batch_size=BATCH_SIZE,shuffle=True,num_workers=2)
+layer_dataset = Layer_Dataset(options.data_dir)
+data_loader = DataLoader(layer_dataset, batch_size=options.batch_size,shuffle=True,num_workers=2)
 
 dense_net = (Dense_Net(in_dim=8,out_dim=4,num_neurons=NUM_NEURONS)).cuda()
 
@@ -66,8 +66,8 @@ for epoch in range(EPOCHS):
         if i % 1000 == 0:
             print('\n')
             print('Epoch: {}'.format(epoch))
-            print('Ground Truth: {}'.format(ground_truth))
-            print('Predictions {}'.format(predictions))
+            print('Ground Truth: {}'.format(ground_truth.data.cpu()))
+            print('Predictions {}'.format(predictions.data.cpu()))
             print('Loss: {}'.format(loss))
             torch.save(dense_net,os.path.join('./model',MODEL_NAME))
         

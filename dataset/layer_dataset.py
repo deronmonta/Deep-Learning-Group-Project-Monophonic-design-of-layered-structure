@@ -14,8 +14,8 @@ class Layer_Dataset(Dataset):
     def __init__(self,data_dir):
         print(data_dir)
         
-        
-        self.dataframe = pd.read_csv(data_dir)
+        file = open(data_dir,'rb')
+        self.dataframe  = pickle.load(file)
         print(self.dataframe)
 
 
