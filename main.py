@@ -21,6 +21,9 @@ parser.add_argument('--model_name',default='./forward_model.pkl')
 parser.add_argument('--hidden_neurons',type=int,default=256)
 parser.add_argument('--learning_rate',type=float,default=0.0001)
 parser.add_argument('--epochs',type=int,default=100,help='Number of epochs to train')
+parser.add_argument('--in_dim',type=int,default=9,help='Number of input dimension')
+parser.add_argument('--out_dim',type=int,default=3,help='Number of output dimension')
+
 
 options = parser.parse_args()
 print(options)
@@ -30,7 +33,7 @@ print(options)
 layer_dataset = Layer_Dataset(options.data_dir) 
 data_loader = DataLoader(layer_dataset, batch_size=options.batch_size,shuffle=True,num_workers=2)
 
-dense_net = (Dense_Net(in_dim=8,out_dim=4,num_units=options.hidden_neurons)).cuda()
+dense_net = (Dense_Net(in_dim=options.in_dim,out_dim=options.out_dim,num_units=options.hidden_neurons)).cuda()
 
 net_optimizer = optim.Adam(dense_net.parameters(),lr=options.learning_rate)
 
@@ -52,7 +55,7 @@ for epoch in range(options.epochs):
         
         
         layer_thickness = sample['layer_thickness'].float().cuda()
-        ground_truth = sample['Lambda_RTA'].float().cuda()
+        ground_truth = sample['RTA'].float().cuda()
         
         dense_net.zero_grad()
 

@@ -16,6 +16,11 @@ class Layer_Dataset(Dataset):
         file = open(data_dir,'rb')
         self.dataframe  = pickle.load(file)
         self.dataframe = self.dataframe.dropna()
+
+        new_columns = ['R','T','A','d1','d2','d3','d4','d5','d6','d7','d8','Lambda']
+
+        self.dataframe = self.dataframe.reindex(columns=new_columns)
+
         print(self.dataframe)
 
         
@@ -23,13 +28,13 @@ class Layer_Dataset(Dataset):
         self.mode = mode
         
     def __getitem__(self,index):
-        layer_thickness = self.dataframe.iloc[index,4:12].values # last 8 columns for layer thickness
-        Lambda_RTA = self.dataframe.iloc[index,0:4].values
+        layer_thickness = self.dataframe.iloc[index,3:].values # last 9 columns for layer thickness plus lambda
+        RTA = self.dataframe.iloc[index,0:3].values
         
         #Transform to pytorch tensor
         layer_thickness_tensor = torch.tensor(layer_thickness)
-        Lambda_RTA = torch.tensor(Lambda_RTA)
-        sample = {'Lambda_RTA':Lambda_RTA, 'layer_thickness':layer_thickness_tensor}
+        RTA = torch.tensor(RTA)
+        sample = {'RTA':RTA, 'layer_thickness':layer_thickness_tensor}
 
         if self.mode == 'gan':
             data = self.dataframe.iloc[index,:].values
