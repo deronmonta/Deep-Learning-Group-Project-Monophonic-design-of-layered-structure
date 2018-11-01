@@ -1,4 +1,6 @@
-/data
-/model
+data/
+model/
 *.png
 .vscode
+*.pyc
+__pycache__/

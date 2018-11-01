@@ -30,7 +30,7 @@ print(options)
 layer_dataset = Layer_Dataset(options.data_dir) 
 data_loader = DataLoader(layer_dataset, batch_size=options.batch_size,shuffle=True,num_workers=2)
 
-dense_net = (Dense_Net(in_dim=8,out_dim=4,num_units=options.hidden_neurons)).cuda()
+dense_net = (Dense_Net(in_dim=9,out_dim=3,num_units=options.hidden_neurons)).cuda()
 
 net_optimizer = optim.Adam(dense_net.parameters(),lr=options.learning_rate)
 

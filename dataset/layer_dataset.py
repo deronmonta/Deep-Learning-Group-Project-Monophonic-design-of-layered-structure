@@ -23,13 +23,13 @@ class Layer_Dataset(Dataset):
         self.mode = mode
         
     def __getitem__(self,index):
-        layer_thickness = self.dataframe.iloc[index,4:12].values # last 8 columns for layer thickness
-        Lambda_RTA = self.dataframe.iloc[index,0:4].values
+        layer_thickness = self.dataframe.iloc[index,3:12].values # last 9 columns for layer thickness plus lambda
+        RTA = self.dataframe.iloc[index,0:3].values
         
         #Transform to pytorch tensor
         layer_thickness_tensor = torch.tensor(layer_thickness)
-        Lambda_RTA = torch.tensor(Lambda_RTA)
-        sample = {'Lambda_RTA':Lambda_RTA, 'layer_thickness':layer_thickness_tensor}
+        RTA = torch.tensor(RTA)
+        sample = {'RTA':RTA, 'layer_thickness':layer_thickness_tensor}
 
         if self.mode == 'gan':
             data = self.dataframe.iloc[index,:].values
