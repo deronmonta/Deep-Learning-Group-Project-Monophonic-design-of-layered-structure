@@ -8,9 +8,13 @@ from nets.layers import *
 
 class Dense_Net(nn.Module):
     def __init__(self, in_dim, out_dim, num_units):
-        '''
-        Fully connected network for forward regression
-        '''
+        """Fully connected network for forward regression
+        
+        Arguments:
+            in_dim {int} -- [Number of input dimension]
+            out_dim {int} -- [description]
+            num_units {int} -- [description]
+        """
         print('\n---------------------Dense Net Starting ---------------------')
         super(Dense_Net,self).__init__()
         self.in_dim = in_dim

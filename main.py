@@ -14,13 +14,15 @@ import argparse
 #Hyperparameters
 
 parser = argparse.ArgumentParser(description='This script will train a network for the forward pass of the data')
-parser.add_argument('--data_dir',default='./data/all_design.pkl',help='path to directory containing the layer designs and outputs')
+parser.add_argument('--data_dir',default='./data/test.pkl',help='path to directory containing the layer designs and outputs')
 parser.add_argument('--model_dir',default='./model',help='Directory to save and load the model')
 parser.add_argument('--batch_size', type=int, default=128, help='input batch size')
-parser.add_argument('--model_name',default='./forward_model.pkl')
+parser.add_argument('--model_name',default='./forward_model_large_design.pkl')
 parser.add_argument('--hidden_neurons',type=int,default=256)
 parser.add_argument('--learning_rate',type=float,default=0.0001)
 parser.add_argument('--epochs',type=int,default=100,help='Number of epochs to train')
+parser.add_argument('--in_dim',type=int,default=103,help='Input dimension')
+parser.add_argument('--out_dim',type=int,default=3,help='Output dimension')
 
 options = parser.parse_args()
 print(options)
@@ -30,7 +32,7 @@ print(options)
 layer_dataset = Layer_Dataset(options.data_dir) 
 data_loader = DataLoader(layer_dataset, batch_size=options.batch_size,shuffle=True,num_workers=2)
 
-dense_net = (Dense_Net(in_dim=9,out_dim=3,num_units=options.hidden_neurons)).cuda()
+dense_net = (Dense_Net(in_dim=options.in_dim,out_dim=3,num_units=options.hidden_neurons)).cuda()
 
 net_optimizer = optim.Adam(dense_net.parameters(),lr=options.learning_rate)
 
@@ -51,12 +53,12 @@ for epoch in range(options.epochs):
     for i,sample in tqdm(enumerate(layer_dataset)):
         
         
-        layer_thickness = sample['layer_thickness'].float().cuda()
-        ground_truth = sample['Lambda_RTA'].float().cuda()
+        design_parameters = sample['design_parameters'].float().cuda()
+        ground_truth = sample['RTA'].float().cuda()
         
         dense_net.zero_grad()
 
-        predictions = dense_net(layer_thickness)
+        predictions = dense_net(design_parameters)
         loss = loss_func(predictions,ground_truth)
         loss.backward()
         net_optimizer.step()
