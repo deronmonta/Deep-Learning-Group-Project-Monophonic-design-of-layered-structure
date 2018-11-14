@@ -33,7 +33,6 @@ layer_dataset = Layer_Dataset(options.data_dir)
 data_loader = DataLoader(layer_dataset, batch_size=options.batch_size,shuffle=True,num_workers=2)
 
 dense_net = (Dense_Net(in_dim=options.in_dim,out_dim=3,num_units=options.hidden_neurons)).cuda()
-
 net_optimizer = optim.Adam(dense_net.parameters(),lr=options.learning_rate)
 
 loss_func = nn.MSELoss()
@@ -54,10 +53,8 @@ for epoch in range(options.epochs):
         
         
         design_parameters = sample['design_parameters'].float().cuda()
+        layer_thickness = sample['layer_thickness'].float().cuda()
         ground_truth = sample['RTA'].float().cuda()
-        
-        dense_net.zero_grad()
-
         predictions = dense_net(design_parameters)
         loss = loss_func(predictions,ground_truth)
         loss.backward()
