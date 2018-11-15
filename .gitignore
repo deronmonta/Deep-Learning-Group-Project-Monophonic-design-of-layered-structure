@@ -4,3 +4,4 @@ model/
 .vscode
 *.pyc
 __pycache__/
+weights_results/
