@@ -20,32 +20,22 @@ class Layer_Dataset(Dataset):
         self.dataframe  = pickle.load(file)
         self.dataframe = self.dataframe.dropna()
 
-        new_columns = ['R','T','A','d1','d2','d3','d4','d5','d6','d7','d8','Lambda']
+        #new_columns = ['R','T','A','d1','d2','d3','d4','d5','d6','d7','d8','Lambda']
 
-        self.dataframe = self.dataframe.reindex(columns=new_columns)
+        #self.dataframe = self.dataframe.reindex(columns=new_columns)
 
         print(self.dataframe)
 
         self.mode = mode
         
     def __getitem__(self,index):
-<<<<<<< HEAD
-        design_parameters = self.dataframe.iloc[index,:-3].values # last 9 columns for layer thickness plus lambda
-        RTA = self.dataframe.iloc[index,-4:-1].values
+        RT = self.dataframe.iloc[index,0:2].values 
+        design_parameters = self.dataframe.iloc[index,2:].values 
         
         #Transform to pytorch tensor
         design_parameters = torch.tensor(design_parameters)
-        RTA = torch.tensor(RTA)
-        sample = {'RTA':RTA, 'design_parameters':design_parameters}
-=======
-        layer_thickness = self.dataframe.iloc[index,3:].values # last 9 columns for layer thickness plus lambda
-        RTA = self.dataframe.iloc[index,0:3].values
-        
-        #Transform to pytorch tensor
-        layer_thickness_tensor = torch.tensor(layer_thickness)
-        RTA = torch.tensor(RTA)
-        sample = {'RTA':RTA, 'layer_thickness':layer_thickness_tensor}
->>>>>>> bf55591d0f2eb81b4507ae11d949aaecfd0b8bd5
+        RT = torch.tensor(RT)
+        sample = {'RT':RT, 'design_parameters':design_parameters}
 
         if self.mode == 'gan':
             data = self.dataframe.iloc[index,:].values

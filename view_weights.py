@@ -11,8 +11,9 @@ try:
     model = torch.load(MODEL_NAME)
     print('Model Loaded')
     for param in model.parameters():
-        print(param.data)
+        print(param.shape)
 except:
     print('Model not found')
 
 
+    
