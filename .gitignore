@@ -5,3 +5,4 @@ model/
 *.pyc
 __pycache__/
 weights_results/
+logs/

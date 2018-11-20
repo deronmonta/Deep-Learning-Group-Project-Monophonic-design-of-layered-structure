@@ -8,6 +8,11 @@ from dataset.layer_dataset import *
 from nets.nets import *
 from tqdm import tqdm
 import argparse
+from logger import Logger
+
+
+
+
 #This trains the model with the forward pass
 
 
@@ -19,32 +24,42 @@ parser.add_argument('--model_dir',default='./model',help='Directory to save and 
 parser.add_argument('--batch_size', type=int, default=128, help='input batch size')
 parser.add_argument('--model_name',default='./1024neuron.pkl')
 parser.add_argument('--hidden_neurons',type=int,default=256)
-parser.add_argument('--learning_rate',type=float,default=0.0001)
+parser.add_argument('--learning_rate',type=float,default=0.001)
 parser.add_argument('--epochs',type=int,default=100,help='Number of epochs to train')
 parser.add_argument('--in_dim',type=int,default=13,help='Input dimension')
 parser.add_argument('--out_dim',type=int,default=2,help='Output dimension')
+parser.add_argument('--log_dir',default='./logs',help='directory to save the logs')
 
 options = parser.parse_args()
 print(options)
 
+if not os.path.exists(options.model_dir):
+    os.mkdir(options.model_dir)
+if not os.path.exists(options.log_dir):
+    os.mkdir(options.log_dir)
 
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+logger = Logger(options.log_dir)
 
 layer_dataset = Layer_Dataset(options.data_dir) 
 data_loader = DataLoader(layer_dataset, batch_size=options.batch_size,shuffle=True,num_workers=2)
 
-dense_net = (Dense_Net(in_dim=options.in_dim,out_dim=options.out_dim,num_units=options.hidden_neurons)).cuda()
-net_optimizer = optim.Adam(dense_net.parameters(),lr=options.learning_rate)
 
-loss_func = nn.MSELoss()
+dense_net = (Dense_Net(in_dim=options.in_dim,out_dim=options.out_dim,num_units=options.hidden_neurons)).to(device)
 
-if not os.path.exists(options.model_dir):
-    os.mkdir(options.model_dir)
+
+
 
 try:
     dense_net = torch.load(os.path.join(options.model_dir, options.model_name))
     print("\n----------------------Model restored----------------------\n")
 except:
     print("\n----------------------Model not restored----------------------\n")
+
+
+net_optimizer = optim.Adam(dense_net.parameters(),lr=options.learning_rate)
+loss_func = nn.MSELoss()
+
 
 for epoch in tqdm(range(options.epochs)):
     for i,sample in tqdm(enumerate(layer_dataset)):
@@ -58,6 +73,8 @@ for epoch in tqdm(range(options.epochs)):
         net_optimizer.step()
 
         
+
+        
         if i % 10000 == 0:
             print('\n')
             print('Epoch: {}'.format(epoch))
@@ -65,7 +82,27 @@ for epoch in tqdm(range(options.epochs)):
             print('Predictions {}'.format(predictions.data.cpu()))
             print('Loss: {}'.format(loss))
             torch.save(dense_net,os.path.join('./model',options.model_name))
-        
+
+
+            #######################################################################################################################
+            # Tensorboard logger
+            #######################################################################################################################
+            
+            info = {'loss': loss.item()}
+
+
+            for tag,value in info.items():
+                logger.scalar_summary(tag,value,i+1)
+
+
+            for tag, value in dense_net.named_parameters():
+                tag = tag.replace('.', '/')
+                logger.histo_summary(tag, value.data.cpu().numpy(), i+1)
+                logger.histo_summary(tag+'/grad', value.grad.data.cpu().numpy(), i+1)
+
+
+
+
 
 
 
