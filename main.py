@@ -62,7 +62,7 @@ loss_func = nn.MSELoss()
 
 
 for epoch in tqdm(range(options.epochs)):
-    for i,sample in tqdm(enumerate(layer_dataset)):
+    for i,sample in tqdm(enumerate(data_loader)):
         
         
         design_parameters = sample['design_parameters'].float().cuda()
@@ -71,6 +71,7 @@ for epoch in tqdm(range(options.epochs)):
         loss = loss_func(predictions,ground_truth)
         loss.backward() 
         net_optimizer.step()
+        net_optimizer.zero_grad()
 
         
 
