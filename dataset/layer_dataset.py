@@ -29,9 +29,12 @@ class Layer_Dataset(Dataset):
         self.mode = mode
         
     def __getitem__(self,index):
+
         RT = self.dataframe.iloc[index,0:2].values 
-        design_parameters = self.dataframe.iloc[index,2:].values 
-        
+        design_parameters = self.dataframe.iloc[index,2:]
+        # normalized_design_parameters=(design_parameters-design_parameters.mean())/design_parameters.std()
+        # normalized_design_parameters = normalized_design_parameters.values
+
         #Transform to pytorch tensor
         design_parameters = torch.tensor(design_parameters)
         RT = torch.tensor(RT)
